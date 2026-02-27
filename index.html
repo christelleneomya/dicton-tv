@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Dicton du jour</title>
+
+<style>
+  :root{
+    /* Palette douce (résidence seniors) */
+    --bg:#fbf7f0;          /* crème */
+    --bg2:#fffdf9;         /* ivoire */
+    --card:#ffffff;
+    --ink:#2b231b;         /* brun doux (meilleure lisibilité) */
+    --muted:#7b6a5a;       /* taupe */
+    --line:#eadfd2;        /* séparateurs */
+    --accent:#b65c3a;      /* terracotta doux */
+    --accent2:#d8a15f;     /* miel */
+    --chip:#f3ede3;        /* badge */
+  }
+
+  *{ box-sizing:border-box; }
+
+  body{
+    margin:0;
+    min-height:100vh;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
+    color: var(--ink);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 56px;
+
+    /* fond très discret */
+    background:
+      radial-gradient(900px 520px at 12% 18%, rgba(216,161,95,.18), transparent 60%),
+      radial-gradient(900px 520px at 88% 22%, rgba(182,92,58,.12), transparent 62%),
+      linear-gradient(180deg, var(--bg), var(--bg2));
+  }
+
+  .frame{
+    width:min(1500px, 96vw);
+    border-radius: 34px;
+    padding: 14px;
+    background: linear-gradient(135deg, rgba(182,92,58,.55), rgba(216,161,95,.55));
+    box-shadow: 0 26px 70px rgba(43,35,27,.14);
+  }
+
+  .card{
+    border-radius: 26px;
+    background: rgba(255,255,255,.88);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(234,223,210,.9);
+    overflow:hidden;
+    position:relative;
+  }
+
+  /* léger effet “papier” */
+  .card::before{
+    content:"";
+    position:absolute;
+    inset:0;
+    background:
+      radial-gradient(700px 360px at 20% 18%, rgba(216,161,95,.10), transparent 60%),
+      radial-gradient(700px 360px at 85% 22%, rgba(182,92,58,.08), transparent 62%);
+    pointer-events:none;
+  }
+
+  .content{
+    position:relative;
+    padding: 44px 62px 38px;
+    text-align:center;
+  }
+
+  .topbar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap: 24px;
+    margin-bottom: 18px;
+  }
+
+  .date{
+    font-size: 42px;
+    font-weight: 700;
+    color: var(--ink);
+    text-transform: lowercase;
+  }
+
+  .badge{
+    font-size: 16px;
+    font-weight: 800;
+    letter-spacing: .8px;
+    text-transform: uppercase;
+    padding: 10px 14px;
+    border-radius: 999px;
+    background: var(--chip);
+    border: 1px solid rgba(234,223,210,1);
+    color: var(--muted);
+    white-space: nowrap;
+  }
+
+  .clock{
+    margin: 20px auto 10px;
+    display:inline-flex;
+    align-items:baseline;
+    justify-content:center;
+    gap: 12px;
+    padding: 18px 26px;
+    border-radius: 18px;
+    background: rgba(243,237,227,.75);
+    border: 1px solid rgba(234,223,210,.95);
+  }
+
+  .timeMain{
+    font-size: 92px;
+    font-weight: 900;
+    letter-spacing: 1px;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .timeSec{
+    font-size: 34px;
+    font-weight: 800;
+    color: var(--muted);
+  }
+
+  .rule{
+    width: 220px;
+    height: 6px;
+    border-radius: 99px;
+    margin: 26px auto 28px;
+    background: linear-gradient(90deg, transparent, rgba(182,92,58,.30), rgba(216,161,95,.32), transparent);
+  }
+
+  .quoteWrap{
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 14px;
+  }
+
+  .quoteMark{
+    font-size: 54px;
+    font-weight: 900;
+    line-height: 1;
+    color: rgba(182,92,58,.22);
+    margin-bottom: 6px;
+  }
+
+  .dicton{
+    font-size: 70px;
+    font-weight: 800;
+    line-height: 1.20;
+    letter-spacing: .2px;
+
+    hyphens: none;
+    word-break: normal;
+    overflow-wrap: normal;
+    white-space: pre-line;
+  }
+
+  .meta{
+    margin-top: 22px;
+    font-size: 18px;
+    color: var(--muted);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap: 10px;
+  }
+
+  .dot{
+    width:10px; height:10px; border-radius:50%;
+    background: linear-gradient(135deg, rgba(182,92,58,.75), rgba(216,161,95,.85));
+  }
+
+  @media (max-width: 1100px){
+    body{ padding: 26px; }
+    .content{ padding: 30px 22px 26px; }
+    .topbar{ flex-direction:column; gap: 12px; }
+    .date{ font-size: 30px; }
+    .timeMain{ font-size: 70px; }
+    .timeSec{ font-size: 26px; }
+    .dicton{ font-size: 46px; }
+  }
+</style>
+</head>
+
+<body>
+  <div class="frame">
+    <div class="card">
+      <div class="content">
+        <div class="topbar">
+          <div class="date" id="date">—</div>
+          <div class="badge">Dicton du jour</div>
+        </div>
+
+        <div class="clock">
+          <div class="timeMain" id="timeMain">—</div>
+          <div class="timeSec" id="timeSec">—</div>
+        </div>
+
+        <div class="rule"></div>
+
+        <div class="quoteWrap">
+          <div class="quoteMark">“</div>
+          <div class="dicton" id="dicton">Chargement du dicton…</div>
+        </div>
+
+        <div class="meta">
+          <span class="dot"></span>
+          <span id="source">Source : saint-dicton.com</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<script>
+  function updateTime(){
+    const now = new Date();
+    document.getElementById("date").textContent =
+      now.toLocaleDateString("fr-FR", { weekday:'long', year:'numeric', month:'long', day:'numeric' });
+
+    const t = now.toLocaleTimeString("fr-FR"); // 18:37:20
+    const parts = t.split(":");
+    document.getElementById("timeMain").textContent = parts.slice(0,2).join(":");
+    document.getElementById("timeSec").textContent = ":" + (parts[2] || "00");
+  }
+  setInterval(updateTime, 1000);
+  updateTime();
+
+  async function fetchHtml(url){
+    const tries = [
+      async () => {
+        const r = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(url), { cache:"no-store" });
+        if(!r.ok) throw new Error("allorigins");
+        const j = await r.json();
+        return j.contents;
+      },
+      async () => {
+        const clean = url.replace(/^https?:\/\//, "");
+        const r = await fetch("https://r.jina.ai/http://" + clean, { cache:"no-store" });
+        if(!r.ok) throw new Error("jina");
+        return await r.text();
+      }
+    ];
+    let lastErr;
+    for(const t of tries){
+      try { return await t(); } catch(e){ lastErr = e; }
+    }
+    throw lastErr;
+  }
+
+  function htmlToText(html){
+    const doc = new DOMParser().parseFromString(String(html), "text/html");
+    const text = (doc.body && doc.body.innerText) ? doc.body.innerText : String(html);
+    return text.replace(/\r/g, "");
+  }
+
+  function cleanDicton(s){
+    return s
+      .replace(/^-{3,}\s*$/gm, "")
+      .replace(/[ \t]+\n/g, "\n")
+      .replace(/\n{3,}/g, "\n\n")
+      .trim();
+  }
+
+  function extractDictonFromText(text){
+    const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
+    const idx = lines.findIndex(l => l.toLowerCase().includes("dicton du jour"));
+    if(idx === -1) return null;
+
+    const stopWords = ["prénoms à fêter","phase de la lune","fêtes du","saints du calendrier","haut de la page"];
+    const out = [];
+    for(let i = idx + 1; i < lines.length; i++){
+      const l = lines[i];
+      const low = l.toLowerCase();
+      if(stopWords.some(w => low.includes(w))) break;
+      if(/^-{3,}$/.test(l)) continue;
+      out.push(l);
+      if(out.length >= 4) break;
+    }
+
+    return cleanDicton(out.join("\n")).replace(/,([^\s])/g, ", $1");
+  }
+
+  async function loadDicton(){
+    const el = document.getElementById("dicton");
+    el.textContent = "Chargement du dicton…";
+    try{
+      const html = await fetchHtml("https://www.saint-dicton.com/");
+      const text = htmlToText(html);
+      const dicton = extractDictonFromText(text);
+      el.textContent = dicton || "Dicton introuvable.";
+    }catch(e){
+      el.textContent = "Impossible de charger le dicton.";
+    }
+  }
+
+  loadDicton();
+  setInterval(loadDicton, 60 * 60 * 1000);
+</script>
+</body>
+</html>
