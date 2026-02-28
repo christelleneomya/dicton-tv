@@ -5,18 +5,22 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>Dicton du jour</title>
 
+<link rel="preconnect" href="https://api.allorigins.win">
+<link rel="preconnect" href="https://r.jina.ai">
+<link rel="dns-prefetch" href="//api.allorigins.win">
+<link rel="dns-prefetch" href="//r.jina.ai">
+
 <style>
   :root{
-    /* Palette douce (résidence seniors) */
-    --bg:#fbf7f0;          /* crème */
-    --bg2:#fffdf9;         /* ivoire */
+    --bg:#fbf7f0;
+    --bg2:#fffdf9;
     --card:#ffffff;
-    --ink:#2b231b;         /* brun doux (meilleure lisibilité) */
-    --muted:#7b6a5a;       /* taupe */
-    --line:#eadfd2;        /* séparateurs */
-    --accent:#b65c3a;      /* terracotta doux */
-    --accent2:#d8a15f;     /* miel */
-    --chip:#f3ede3;        /* badge */
+    --ink:#2b231b;
+    --muted:#7b6a5a;
+    --line:#eadfd2;
+    --accent:#b65c3a;
+    --accent2:#d8a15f;
+    --chip:#f3ede3;
   }
 
   *{ box-sizing:border-box; }
@@ -30,8 +34,6 @@
     align-items:center;
     justify-content:center;
     padding: 56px;
-
-    /* fond très discret */
     background:
       radial-gradient(900px 520px at 12% 18%, rgba(216,161,95,.18), transparent 60%),
       radial-gradient(900px 520px at 88% 22%, rgba(182,92,58,.12), transparent 62%),
@@ -55,7 +57,6 @@
     position:relative;
   }
 
-  /* léger effet “papier” */
   .card::before{
     content:"";
     position:absolute;
@@ -217,6 +218,9 @@
   </div>
 
 <script>
+  // -------------------------
+  // Horloge + date
+  // -------------------------
   function updateTime(){
     const now = new Date();
     document.getElementById("date").textContent =
@@ -230,28 +234,74 @@
   setInterval(updateTime, 1000);
   updateTime();
 
-  async function fetchHtml(url){
-    const tries = [
-      async () => {
-        const r = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent(url), { cache:"no-store" });
-        if(!r.ok) throw new Error("allorigins");
-        const j = await r.json();
-        return j.contents;
-      },
-      async () => {
-        const clean = url.replace(/^https?:\/\//, "");
-        const r = await fetch("https://r.jina.ai/http://" + clean, { cache:"no-store" });
-        if(!r.ok) throw new Error("jina");
-        return await r.text();
-      }
-    ];
-    let lastErr;
-    for(const t of tries){
-      try { return await t(); } catch(e){ lastErr = e; }
+  // -------------------------
+  // Cache local (affichage instantané)
+  // -------------------------
+  const DIC_KEY = "dicton_cache_v1";
+  const DIC_TS  = "dicton_cache_ts_v1";
+  const TTL_MS  = 6 * 60 * 60 * 1000; // 6 heures
+  const FETCH_TIMEOUT_MS = 6000; // 6s
+
+  function readCachedDicton(){
+    try{
+      const dic = localStorage.getItem(DIC_KEY);
+      const ts = Number(localStorage.getItem(DIC_TS) || 0);
+      if(!dic) return null;
+      return { dic, ts };
+    }catch(_){
+      return null;
     }
-    throw lastErr;
   }
 
+  function writeCachedDicton(dic){
+    try{
+      localStorage.setItem(DIC_KEY, dic);
+      localStorage.setItem(DIC_TS, String(Date.now()));
+    }catch(_){}
+  }
+
+  // -------------------------
+  // Fetch avec timeout
+  // -------------------------
+  async function fetchWithTimeout(url, ms = FETCH_TIMEOUT_MS){
+    const ctl = new AbortController();
+    const t = setTimeout(() => ctl.abort(), ms);
+    try{
+      return await fetch(url, { signal: ctl.signal });
+    } finally {
+      clearTimeout(t);
+    }
+  }
+
+  // -------------------------
+  // Récupération HTML via proxys (parallèle)
+  // -------------------------
+  async function fetchHtml(targetUrl){
+    const allOrigins = (async () => {
+      const r = await fetchWithTimeout(
+        "https://api.allorigins.win/get?url=" + encodeURIComponent(targetUrl)
+      );
+      if(!r.ok) throw new Error("allorigins");
+      const j = await r.json();
+      return j.contents;
+    })();
+
+    const jina = (async () => {
+      const clean = targetUrl.replace(/^https?:\/\//, "");
+      const r = await fetchWithTimeout(
+        "https://r.jina.ai/http://" + clean
+      );
+      if(!r.ok) throw new Error("jina");
+      return await r.text();
+    })();
+
+    // Premier qui réussit
+    return await Promise.any([allOrigins, jina]);
+  }
+
+  // -------------------------
+  // Parsing / extraction
+  // -------------------------
   function htmlToText(html){
     const doc = new DOMParser().parseFromString(String(html), "text/html");
     const text = (doc.body && doc.body.innerText) ? doc.body.innerText : String(html);
@@ -271,7 +321,14 @@
     const idx = lines.findIndex(l => l.toLowerCase().includes("dicton du jour"));
     if(idx === -1) return null;
 
-    const stopWords = ["prénoms à fêter","phase de la lune","fêtes du","saints du calendrier","haut de la page"];
+    const stopWords = [
+      "prénoms à fêter",
+      "phase de la lune",
+      "fêtes du",
+      "saints du calendrier",
+      "haut de la page"
+    ];
+
     const out = [];
     for(let i = idx + 1; i < lines.length; i++){
       const l = lines[i];
@@ -279,26 +336,49 @@
       if(stopWords.some(w => low.includes(w))) break;
       if(/^-{3,}$/.test(l)) continue;
       out.push(l);
-      if(out.length >= 4) break;
+      if(out.length >= 6) break; // un peu plus robuste qu'avant
     }
 
     return cleanDicton(out.join("\n")).replace(/,([^\s])/g, ", $1");
   }
 
+  // -------------------------
+  // Chargement dicton (cache -> rafraîchit si besoin)
+  // -------------------------
   async function loadDicton(){
     const el = document.getElementById("dicton");
-    el.textContent = "Chargement du dicton…";
+
+    // Affiche instantanément le cache si disponible
+    const cached = readCachedDicton();
+    if (cached && cached.dic) {
+      el.textContent = cached.dic;
+    } else {
+      el.textContent = "Chargement du dicton…";
+    }
+
+    // Si cache récent, on évite le réseau
+    if (cached && (Date.now() - cached.ts) < TTL_MS) return;
+
     try{
       const html = await fetchHtml("https://www.saint-dicton.com/");
       const text = htmlToText(html);
       const dicton = extractDictonFromText(text);
-      el.textContent = dicton || "Dicton introuvable.";
+
+      if (dicton) {
+        el.textContent = dicton;
+        writeCachedDicton(dicton);
+      } else {
+        // Si on avait un cache, on ne le remplace pas par un message moins bien
+        if (!cached) el.textContent = "Dicton introuvable.";
+      }
     }catch(e){
-      el.textContent = "Impossible de charger le dicton.";
+      if (!cached) el.textContent = "Impossible de charger le dicton.";
     }
   }
 
   loadDicton();
+
+  // Rafraîchit toutes les heures, mais le TTL empêche les appels inutiles
   setInterval(loadDicton, 60 * 60 * 1000);
 </script>
 </body>
