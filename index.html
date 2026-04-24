@@ -45,12 +45,12 @@
     border-radius:34px;
     padding:14px;
     background:linear-gradient(135deg, rgba(182,92,58,.55), rgba(216,161,95,.55));
-    box-shadow:0 26px 70px rgba(43,35,27,.14);
+    box-shadow:0 18px 45px rgba(43,35,27,.12);
   }
 
   .card{
     border-radius:26px;
-    background:#ffffff; /* simplifié pour performance */
+    background:#ffffff;
     border:1px solid rgba(234,223,210,.9);
     overflow:hidden;
     position:relative;
@@ -73,6 +73,7 @@
   .date{
     font-size:42px;
     font-weight:700;
+    color:var(--ink);
     text-transform:lowercase;
   }
 
@@ -86,6 +87,7 @@
     background:var(--chip);
     border:1px solid rgba(234,223,210,1);
     color:var(--muted);
+    white-space:nowrap;
   }
 
   .clock{
@@ -103,6 +105,9 @@
   .timeMain{
     font-size:92px;
     font-weight:900;
+    letter-spacing:1px;
+    line-height:1;
+    color:var(--ink);
   }
 
   .timeSec{
@@ -119,10 +124,28 @@
     background:linear-gradient(90deg, transparent, rgba(182,92,58,.30), rgba(216,161,95,.32), transparent);
   }
 
+  .quoteWrap{
+    max-width:1200px;
+    margin:0 auto;
+    padding:0 14px;
+  }
+
+  .quoteMark{
+    font-size:54px;
+    font-weight:900;
+    line-height:1;
+    color:rgba(182,92,58,.22);
+    margin-bottom:6px;
+  }
+
   .dicton{
     font-size:70px;
     font-weight:800;
-    line-height:1.2;
+    line-height:1.20;
+    letter-spacing:.2px;
+    hyphens:none;
+    word-break:normal;
+    overflow-wrap:normal;
     white-space:pre-line;
   }
 
@@ -130,10 +153,23 @@
     margin-top:22px;
     font-size:18px;
     color:var(--muted);
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:10px;
+  }
+
+  .dot{
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:linear-gradient(135deg, rgba(182,92,58,.75), rgba(216,161,95,.85));
   }
 
   @media (max-width:1100px){
     body{ padding:26px; }
+    .content{ padding:30px 22px 26px; }
+    .topbar{ flex-direction:column; gap:12px; }
     .date{ font-size:30px; }
     .timeMain{ font-size:70px; }
     .timeSec{ font-size:26px; }
@@ -146,7 +182,6 @@
   <div class="frame">
     <div class="card">
       <div class="content">
-
         <div class="topbar">
           <div class="date" id="date">—</div>
           <div class="badge">Dicton du jour</div>
@@ -159,15 +194,15 @@
 
         <div class="rule"></div>
 
-        <!-- TEXTE IMMÉDIAT pour éviter lenteur -->
-        <div class="dicton" id="dicton">
-          Belle journée à toutes et tous.
+        <div class="quoteWrap">
+          <div class="quoteMark">“</div>
+          <div class="dicton" id="dicton">Belle journée à toutes et tous.</div>
         </div>
 
         <div class="meta">
-          Source : saint-dicton.com
+          <span class="dot"></span>
+          <span>Source : saint-dicton.com</span>
         </div>
-
       </div>
     </div>
   </div>
@@ -206,28 +241,127 @@
       updateTime();
       setTimeout(tick, 1000 - (Date.now() % 1000));
     }
+
     tick();
   }
 
   startClock();
 
-  // -------- CACHE DICton --------
   const KEY = "dicton_cache";
   const TS = "dicton_ts";
   const TTL = 6 * 60 * 60 * 1000;
+  const FETCH_TIMEOUT = 8000;
 
   function getCache(){
     try{
-      return {
-        text: localStorage.getItem(KEY),
-        ts: Number(localStorage.getItem(TS) || 0)
-      };
-    }catch{ return null; }
+      const text = localStorage.getItem(KEY);
+      const ts = Number(localStorage.getItem(TS) || 0);
+      if(!text) return null;
+      return { text, ts };
+    }catch(e){
+      return null;
+    }
   }
 
   function setCache(text){
-    localStorage.setItem(KEY, text);
-    localStorage.setItem(TS, Date.now());
+    try{
+      localStorage.setItem(KEY, text);
+      localStorage.setItem(TS, String(Date.now()));
+    }catch(e){}
+  }
+
+  async function fetchWithTimeout(url){
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), FETCH_TIMEOUT);
+
+    try{
+      const response = await fetch(url, {
+        signal: controller.signal,
+        cache: "no-store"
+      });
+
+      if(!response.ok){
+        throw new Error("Erreur réseau");
+      }
+
+      return response;
+    }finally{
+      clearTimeout(timer);
+    }
+  }
+
+  async function fetchHtml(){
+    const target = "https://www.saint-dicton.com/?t=" + Date.now();
+
+    const allOrigins = async () => {
+      const response = await fetchWithTimeout(
+        "https://api.allorigins.win/get?url=" + encodeURIComponent(target)
+      );
+      const json = await response.json();
+      return json.contents;
+    };
+
+    const jina = async () => {
+      const clean = target.replace(/^https?:\/\//, "");
+      const response = await fetchWithTimeout(
+        "https://r.jina.ai/http://" + clean
+      );
+      return await response.text();
+    };
+
+    return await Promise.any([
+      allOrigins(),
+      jina()
+    ]);
+  }
+
+  function extractDicton(html){
+    const text = new DOMParser()
+      .parseFromString(String(html), "text/html")
+      .body
+      .innerText;
+
+    const lines = text
+      .split("\n")
+      .map(line => line.trim())
+      .filter(Boolean);
+
+    const index = lines.findIndex(line =>
+      line.toLowerCase().includes("dicton du jour")
+    );
+
+    if(index === -1){
+      return null;
+    }
+
+    const stopWords = [
+      "prénoms à fêter",
+      "phase de la lune",
+      "fêtes du",
+      "saints du calendrier",
+      "haut de la page"
+    ];
+
+    const result = [];
+
+    for(let i = index + 1; i < lines.length; i++){
+      const line = lines[i];
+      const lower = line.toLowerCase();
+
+      if(stopWords.some(word => lower.includes(word))){
+        break;
+      }
+
+      if(line.length > 2){
+        result.push(line);
+      }
+
+      if(result.length >= 4){
+        break;
+      }
+    }
+
+    return result.join("\n").trim() || null;
   }
 
   async function loadDicton(){
@@ -243,35 +377,25 @@
     }
 
     try{
-      const r = await fetch("https://api.allorigins.win/get?url=" + encodeURIComponent("https://www.saint-dicton.com/"));
-      const j = await r.json();
+      const html = await fetchHtml();
+      const dicton = extractDicton(html);
 
-      const text = new DOMParser()
-        .parseFromString(j.contents, "text/html")
-        .body.innerText;
-
-      const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
-      const i = lines.findIndex(l => l.toLowerCase().includes("dicton du jour"));
-
-      if(i !== -1){
-        const dicton = lines.slice(i+1, i+4).join("\n");
+      if(dicton){
         el.textContent = dicton;
         setCache(dicton);
       }
-
-    }catch(e){
-      console.log("Erreur dicton", e);
+    }catch(error){
+      console.log("Impossible de charger le dicton", error);
     }
   }
 
   loadDicton();
 
-  // refresh léger
   setInterval(loadDicton, 60 * 60 * 1000);
 
-  // reload complet toutes les 10 min (important pour player)
-  setInterval(() => location.reload(), 10 * 60 * 1000);
-
+  setInterval(() => {
+    window.location.reload();
+  }, 10 * 60 * 1000);
 </script>
 </body>
 </html>
