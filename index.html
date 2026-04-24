@@ -3,6 +3,11 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+<meta http-equiv="Cache-Control" content="no-store, no-cache, must-revalidate, max-age=0">
+<meta http-equiv="Pragma" content="no-cache">
+<meta http-equiv="Expires" content="0">
+
 <title>Dicton du jour</title>
 
 <link rel="preconnect" href="https://api.allorigins.win">
@@ -28,12 +33,12 @@
   body{
     margin:0;
     min-height:100vh;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
-    color: var(--ink);
+    font-family:-apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
+    color:var(--ink);
     display:flex;
     align-items:center;
     justify-content:center;
-    padding: 56px;
+    padding:56px;
     background:
       radial-gradient(900px 520px at 12% 18%, rgba(216,161,95,.18), transparent 60%),
       radial-gradient(900px 520px at 88% 22%, rgba(182,92,58,.12), transparent 62%),
@@ -42,17 +47,17 @@
 
   .frame{
     width:min(1500px, 96vw);
-    border-radius: 34px;
-    padding: 14px;
-    background: linear-gradient(135deg, rgba(182,92,58,.55), rgba(216,161,95,.55));
-    box-shadow: 0 26px 70px rgba(43,35,27,.14);
+    border-radius:34px;
+    padding:14px;
+    background:linear-gradient(135deg, rgba(182,92,58,.55), rgba(216,161,95,.55));
+    box-shadow:0 26px 70px rgba(43,35,27,.14);
   }
 
   .card{
-    border-radius: 26px;
-    background: rgba(255,255,255,.88);
-    backdrop-filter: blur(8px);
-    border: 1px solid rgba(234,223,210,.9);
+    border-radius:26px;
+    background:rgba(255,255,255,.88);
+    backdrop-filter:blur(8px);
+    border:1px solid rgba(234,223,210,.9);
     overflow:hidden;
     position:relative;
   }
@@ -69,7 +74,7 @@
 
   .content{
     position:relative;
-    padding: 44px 62px 38px;
+    padding:44px 62px 38px;
     text-align:center;
   }
 
@@ -77,113 +82,114 @@
     display:flex;
     align-items:center;
     justify-content:space-between;
-    gap: 24px;
-    margin-bottom: 18px;
+    gap:24px;
+    margin-bottom:18px;
   }
 
   .date{
-    font-size: 42px;
-    font-weight: 700;
-    color: var(--ink);
-    text-transform: lowercase;
+    font-size:42px;
+    font-weight:700;
+    color:var(--ink);
+    text-transform:lowercase;
   }
 
   .badge{
-    font-size: 16px;
-    font-weight: 800;
-    letter-spacing: .8px;
-    text-transform: uppercase;
-    padding: 10px 14px;
-    border-radius: 999px;
-    background: var(--chip);
-    border: 1px solid rgba(234,223,210,1);
-    color: var(--muted);
-    white-space: nowrap;
+    font-size:16px;
+    font-weight:800;
+    letter-spacing:.8px;
+    text-transform:uppercase;
+    padding:10px 14px;
+    border-radius:999px;
+    background:var(--chip);
+    border:1px solid rgba(234,223,210,1);
+    color:var(--muted);
+    white-space:nowrap;
   }
 
   .clock{
-    margin: 20px auto 10px;
+    margin:20px auto 10px;
     display:inline-flex;
     align-items:baseline;
     justify-content:center;
-    gap: 12px;
-    padding: 18px 26px;
-    border-radius: 18px;
-    background: rgba(243,237,227,.75);
-    border: 1px solid rgba(234,223,210,.95);
+    gap:12px;
+    padding:18px 26px;
+    border-radius:18px;
+    background:rgba(243,237,227,.75);
+    border:1px solid rgba(234,223,210,.95);
   }
 
   .timeMain{
-    font-size: 92px;
-    font-weight: 900;
-    letter-spacing: 1px;
-    line-height: 1;
-    color: var(--ink);
+    font-size:92px;
+    font-weight:900;
+    letter-spacing:1px;
+    line-height:1;
+    color:var(--ink);
   }
 
   .timeSec{
-    font-size: 34px;
-    font-weight: 800;
-    color: var(--muted);
+    font-size:34px;
+    font-weight:800;
+    color:var(--muted);
   }
 
   .rule{
-    width: 220px;
-    height: 6px;
-    border-radius: 99px;
-    margin: 26px auto 28px;
-    background: linear-gradient(90deg, transparent, rgba(182,92,58,.30), rgba(216,161,95,.32), transparent);
+    width:220px;
+    height:6px;
+    border-radius:99px;
+    margin:26px auto 28px;
+    background:linear-gradient(90deg, transparent, rgba(182,92,58,.30), rgba(216,161,95,.32), transparent);
   }
 
   .quoteWrap{
-    max-width: 1200px;
-    margin: 0 auto;
-    padding: 0 14px;
+    max-width:1200px;
+    margin:0 auto;
+    padding:0 14px;
   }
 
   .quoteMark{
-    font-size: 54px;
-    font-weight: 900;
-    line-height: 1;
-    color: rgba(182,92,58,.22);
-    margin-bottom: 6px;
+    font-size:54px;
+    font-weight:900;
+    line-height:1;
+    color:rgba(182,92,58,.22);
+    margin-bottom:6px;
   }
 
   .dicton{
-    font-size: 70px;
-    font-weight: 800;
-    line-height: 1.20;
-    letter-spacing: .2px;
-
-    hyphens: none;
-    word-break: normal;
-    overflow-wrap: normal;
-    white-space: pre-line;
+    font-size:70px;
+    font-weight:800;
+    line-height:1.20;
+    letter-spacing:.2px;
+    hyphens:none;
+    word-break:normal;
+    overflow-wrap:normal;
+    white-space:pre-line;
   }
 
   .meta{
-    margin-top: 22px;
-    font-size: 18px;
-    color: var(--muted);
+    margin-top:22px;
+    font-size:18px;
+    color:var(--muted);
     display:flex;
     align-items:center;
     justify-content:center;
-    gap: 10px;
+    gap:10px;
   }
 
   .dot{
-    width:10px; height:10px; border-radius:50%;
-    background: linear-gradient(135deg, rgba(182,92,58,.75), rgba(216,161,95,.85));
+    width:10px;
+    height:10px;
+    border-radius:50%;
+    background:linear-gradient(135deg, rgba(182,92,58,.75), rgba(216,161,95,.85));
   }
 
-  @media (max-width: 1100px){
-    body{ padding: 26px; }
-    .content{ padding: 30px 22px 26px; }
-    .topbar{ flex-direction:column; gap: 12px; }
-    .date{ font-size: 30px; }
-    .timeMain{ font-size: 70px; }
-    .timeSec{ font-size: 26px; }
-    .dicton{ font-size: 46px; }
+  @media (max-width:1100px){
+    body{ padding:26px; }
+    .content{ padding:30px 22px 26px; }
+    .topbar{ flex-direction:column; gap:12px; }
+    .date{ font-size:30px; }
+    .timeMain{ font-size:70px; }
+    .timeSec{ font-size:26px; }
+    .dicton{ font-size:46px; }
   }
 </style>
 </head>
@@ -218,37 +224,62 @@
   </div>
 
 <script>
-  // -------------------------
-  // Horloge + date
-  // -------------------------
+  const TIMEZONE = "Europe/Paris";
+
   function updateTime(){
     const now = new Date();
-    document.getElementById("date").textContent =
-      now.toLocaleDateString("fr-FR", { weekday:'long', year:'numeric', month:'long', day:'numeric' });
 
-    const t = now.toLocaleTimeString("fr-FR"); // 18:37:20
-    const parts = t.split(":");
-    document.getElementById("timeMain").textContent = parts.slice(0,2).join(":");
-    document.getElementById("timeSec").textContent = ":" + (parts[2] || "00");
+    const dateText = new Intl.DateTimeFormat("fr-FR", {
+      timeZone: TIMEZONE,
+      weekday: "long",
+      year: "numeric",
+      month: "long",
+      day: "numeric"
+    }).format(now);
+
+    const timeText = new Intl.DateTimeFormat("fr-FR", {
+      timeZone: TIMEZONE,
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      hour12: false
+    }).format(now);
+
+    const parts = timeText.split(":");
+
+    document.getElementById("date").textContent = dateText;
+    document.getElementById("timeMain").textContent = parts[0] + ":" + parts[1];
+    document.getElementById("timeSec").textContent = ":" + parts[2];
   }
-  setInterval(updateTime, 1000);
-  updateTime();
 
-  // -------------------------
-  // Cache local (affichage instantané)
-  // -------------------------
-  const DIC_KEY = "dicton_cache_v1";
-  const DIC_TS  = "dicton_cache_ts_v1";
-  const TTL_MS  = 6 * 60 * 60 * 1000; // 6 heures
-  const FETCH_TIMEOUT_MS = 6000; // 6s
+  function startClock(){
+    updateTime();
+
+    function tick(){
+      updateTime();
+      const delay = 1000 - (Date.now() % 1000);
+      setTimeout(tick, delay);
+    }
+
+    tick();
+  }
+
+  startClock();
+
+  const DIC_KEY = "dicton_cache_v2";
+  const DIC_TS = "dicton_cache_ts_v2";
+  const TTL_MS = 3 * 60 * 60 * 1000;
+  const FETCH_TIMEOUT_MS = 6000;
 
   function readCachedDicton(){
     try{
       const dic = localStorage.getItem(DIC_KEY);
       const ts = Number(localStorage.getItem(DIC_TS) || 0);
+
       if(!dic) return null;
+
       return { dic, ts };
-    }catch(_){
+    }catch(e){
       return null;
     }
   }
@@ -257,59 +288,64 @@
     try{
       localStorage.setItem(DIC_KEY, dic);
       localStorage.setItem(DIC_TS, String(Date.now()));
-    }catch(_){}
+    }catch(e){}
   }
 
-  // -------------------------
-  // Fetch avec timeout
-  // -------------------------
   async function fetchWithTimeout(url, ms = FETCH_TIMEOUT_MS){
-    const ctl = new AbortController();
-    const t = setTimeout(() => ctl.abort(), ms);
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), ms);
+
     try{
-      return await fetch(url, { signal: ctl.signal });
-    } finally {
-      clearTimeout(t);
+      return await fetch(url, {
+        signal: controller.signal,
+        cache: "no-store"
+      });
+    }finally{
+      clearTimeout(timeout);
     }
   }
 
-  // -------------------------
-  // Récupération HTML via proxys (parallèle)
-  // -------------------------
   async function fetchHtml(targetUrl){
-    const allOrigins = (async () => {
-      const r = await fetchWithTimeout(
-        "https://api.allorigins.win/get?url=" + encodeURIComponent(targetUrl)
-      );
-      if(!r.ok) throw new Error("allorigins");
-      const j = await r.json();
-      return j.contents;
-    })();
+    const urlWithCacheBuster = targetUrl + "?t=" + Date.now();
 
-    const jina = (async () => {
-      const clean = targetUrl.replace(/^https?:\/\//, "");
+    const allOrigins = async () => {
+      const r = await fetchWithTimeout(
+        "https://api.allorigins.win/get?url=" + encodeURIComponent(urlWithCacheBuster)
+      );
+
+      if(!r.ok) throw new Error("Erreur AllOrigins");
+
+      const json = await r.json();
+      return json.contents;
+    };
+
+    const jina = async () => {
+      const clean = urlWithCacheBuster.replace(/^https?:\/\//, "");
+
       const r = await fetchWithTimeout(
         "https://r.jina.ai/http://" + clean
       );
-      if(!r.ok) throw new Error("jina");
-      return await r.text();
-    })();
 
-    // Premier qui réussit
-    return await Promise.any([allOrigins, jina]);
+      if(!r.ok) throw new Error("Erreur Jina");
+
+      return await r.text();
+    };
+
+    return await Promise.any([
+      allOrigins(),
+      jina()
+    ]);
   }
 
-  // -------------------------
-  // Parsing / extraction
-  // -------------------------
   function htmlToText(html){
     const doc = new DOMParser().parseFromString(String(html), "text/html");
-    const text = (doc.body && doc.body.innerText) ? doc.body.innerText : String(html);
+    const text = doc.body && doc.body.innerText ? doc.body.innerText : String(html);
+
     return text.replace(/\r/g, "");
   }
 
-  function cleanDicton(s){
-    return s
+  function cleanDicton(text){
+    return text
       .replace(/^-{3,}\s*$/gm, "")
       .replace(/[ \t]+\n/g, "\n")
       .replace(/\n{3,}/g, "\n\n")
@@ -317,9 +353,16 @@
   }
 
   function extractDictonFromText(text){
-    const lines = text.split("\n").map(l => l.trim()).filter(Boolean);
-    const idx = lines.findIndex(l => l.toLowerCase().includes("dicton du jour"));
-    if(idx === -1) return null;
+    const lines = text
+      .split("\n")
+      .map(line => line.trim())
+      .filter(Boolean);
+
+    const index = lines.findIndex(line =>
+      line.toLowerCase().includes("dicton du jour")
+    );
+
+    if(index === -1) return null;
 
     const stopWords = [
       "prénoms à fêter",
@@ -329,57 +372,65 @@
       "haut de la page"
     ];
 
-    const out = [];
-    for(let i = idx + 1; i < lines.length; i++){
-      const l = lines[i];
-      const low = l.toLowerCase();
-      if(stopWords.some(w => low.includes(w))) break;
-      if(/^-{3,}$/.test(l)) continue;
-      out.push(l);
-      if(out.length >= 6) break; // un peu plus robuste qu'avant
+    const result = [];
+
+    for(let i = index + 1; i < lines.length; i++){
+      const line = lines[i];
+      const lower = line.toLowerCase();
+
+      if(stopWords.some(word => lower.includes(word))) break;
+      if(/^-{3,}$/.test(line)) continue;
+
+      result.push(line);
+
+      if(result.length >= 6) break;
     }
 
-    return cleanDicton(out.join("\n")).replace(/,([^\s])/g, ", $1");
+    const dicton = cleanDicton(result.join("\n"))
+      .replace(/,([^\s])/g, ", $1");
+
+    return dicton || null;
   }
 
-  // -------------------------
-  // Chargement dicton (cache -> rafraîchit si besoin)
-  // -------------------------
   async function loadDicton(){
     const el = document.getElementById("dicton");
-
-    // Affiche instantanément le cache si disponible
     const cached = readCachedDicton();
-    if (cached && cached.dic) {
+
+    if(cached && cached.dic){
       el.textContent = cached.dic;
-    } else {
+    }else{
       el.textContent = "Chargement du dicton…";
     }
 
-    // Si cache récent, on évite le réseau
-    if (cached && (Date.now() - cached.ts) < TTL_MS) return;
+    if(cached && Date.now() - cached.ts < TTL_MS){
+      return;
+    }
 
     try{
       const html = await fetchHtml("https://www.saint-dicton.com/");
       const text = htmlToText(html);
       const dicton = extractDictonFromText(text);
 
-      if (dicton) {
+      if(dicton){
         el.textContent = dicton;
         writeCachedDicton(dicton);
-      } else {
-        // Si on avait un cache, on ne le remplace pas par un message moins bien
-        if (!cached) el.textContent = "Dicton introuvable.";
+      }else if(!cached){
+        el.textContent = "Dicton introuvable.";
       }
-    }catch(e){
-      if (!cached) el.textContent = "Impossible de charger le dicton.";
+    }catch(error){
+      if(!cached){
+        el.textContent = "Impossible de charger le dicton.";
+      }
     }
   }
 
   loadDicton();
 
-  // Rafraîchit toutes les heures, mais le TTL empêche les appels inutiles
   setInterval(loadDicton, 60 * 60 * 1000);
+
+  setInterval(() => {
+    window.location.reload();
+  }, 10 * 60 * 1000);
 </script>
 </body>
 </html>
